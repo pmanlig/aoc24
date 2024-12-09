@@ -71,7 +71,7 @@ export class S8 extends Solver {
 		input = input.split('\n').map(l => l.split(''));
 		let antennae = findAntennae(input);
 		let antinodes = {};
-		for (const [key, value] of Object.entries(antennae)) {
+		for (const [, value] of Object.entries(antennae)) {
 			calculateAntiNodes(value).forEach(an => {
 				let hash = an.x + an.y * 1000;
 				if (within(an, input) && antinodes[hash] === undefined) {
@@ -81,7 +81,7 @@ export class S8 extends Solver {
 		}
 
 		let tnodes = {};
-		for (const [key, value] of Object.entries(antennae)) {
+		for (const [, value] of Object.entries(antennae)) {
 			calculateTNodes(value, input).forEach(tn => {
 				let hash = tn.x + tn.y * 1000;
 				if (within(tn, input) && tnodes[hash] === undefined) {
