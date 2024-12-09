@@ -1,4 +1,5 @@
 // import React from 'react';
+import { Renderer } from '../util';
 import Solver from './Solvers';
 // import { SearchState, PixelMap } from '../util';
 
@@ -11,6 +12,16 @@ const directions = [
 
 const flags = [1, 2, 4, 8];
 const obstacle = 16;
+
+class LoopRenderer extends Renderer {
+	static colors = {
+		0: "#CFCFCF",
+		16: "#000000"
+	}
+	constructor(map) {
+		super(val => val ? LoopRenderer.colors[16] : LoopRenderer.colors[0], map[0].length, map.length, 4)
+	}
+}
 
 export class S6 extends Solver {
 	solve(input) {
@@ -56,7 +67,6 @@ export class S6 extends Solver {
 			return path;
 		}
 
-		/* Meh; this produces too good of a solution!
 		function isLoop(input, init, obst) {
 			let map = makeMap(input);
 			for (let i = 0; i < init.length; i++) {
@@ -70,48 +80,8 @@ export class S6 extends Solver {
 					d = (d + 1) % 4;
 				}
 				pos = newPos(pos, d);
-				if (map[pos.y][pos.x] & flags[d] > 0) { return true; }
-				map[pos.y][pos.x] = map[pos.y][pos.x] | flags[d];
-			}
-			return false;
-		}
-		*/
-
-		function isTrueLoop(map, pos) {
-			let turns = 0;
-			let loop = pos;
-			try {
-				while (turns === 0 || pos.x !== loop.x || pos.y !== loop.y) {
-					let d = pos.d;
-					for (let n = newPos(pos, d); map[n.y][n.x] === obstacle; n = newPos(pos, d)) {
-						d = (d + 1) % 4;
-						turns++;
-					}
-					pos = newPos(pos, d);
-				}
-			} catch (e) {
-				console.log("error", pos);
-			}
-			return turns === 4;
-		}
-
-		function isLoop(input, init, obst) {
-			let map = makeMap(input);
-			for (let i = 0; i < init.length; i++) {
-				map[init[i].y][init[i].x] = map[init[i].y][init[i].x] | flags[init[i].d];
-			}
-			map[obst.y][obst.x] = obstacle;
-			let pos = init.pop();
-			while (pos.x > 0 && pos.x < map[0].length - 1 && pos.y > 0 && pos.y < map.length - 1) {
-				let d = pos.d;
-				for (let n = newPos(pos, d); map[n.y][n.x] === obstacle; n = newPos(pos, d)) {
-					d = (d + 1) % 4;
-				}
-				pos = newPos(pos, d);
-				if (map[pos.y][pos.x] & flags[d] > 0) {
-					console.log(pos, obst);
+				if ((map[pos.y][pos.x] & flags[pos.d]) > 0) {
 					return true;
-					return isTrueLoop(map, pos);
 				}
 				map[pos.y][pos.x] = map[pos.y][pos.x] | flags[d];
 			}
@@ -119,7 +89,7 @@ export class S6 extends Solver {
 		}
 
 		try {
-			input = "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...";
+			// input = "....#.....\n.........#\n..........\n..#.......\n.......#..\n..........\n.#..^.....\n........#.\n#.........\n......#...";
 			input = input.split('\n').map(l => l.split(''));
 			let init = findInitial(input);
 			let path = findPath(input, init);
@@ -128,13 +98,16 @@ export class S6 extends Solver {
 			for (let i = 1; i < path.length; i++) {
 				if (!path.slice(0, i).some(p => p.x === path[i].x && p.y === path[i].y))
 					if (isLoop(input, path.slice(0, i), path[i])) {
-						// console.log(path[i].x, path[i].y);
+						// console.log(`${i}: <${path[i].x}, ${path[i].y}>`);
 						b++;
 					}
 			}
-			// console.log(path[19]);
-			// console.log(isLoop(input, path.slice(0,19), path[19]));
-			return { solution: `Positions visited: ${a}\n# of possible obstacles: ${b}` };
+			let map = makeMap(input);
+			return {
+				solution: `Positions visited: ${a}\n# of possible obstacles: ${b}`,
+				bmp: map,
+				renderer: new LoopRenderer(map)
+			};
 		} catch (e) {
 			console.log(e);
 			return { solution: `Något gick fel` };
