@@ -1,7 +1,6 @@
 // import React from 'react';
 import { BitmapRenderer } from '../util';
 import Solver from './Solvers';
-// import { SearchState, PixelMap } from '../util';
 
 const width = 101, height = 103;
 
@@ -54,40 +53,6 @@ function updateMap(map, robots, width, height) {
 		}
 	}
 	robots.forEach(r => map[r[1]][r[0]]++);
-}
-
-/*
-function isImage(map, width, height) {
-	for (let r = 0; r < height; r++) {
-		for (let c = 0; c < width; c++) {
-			if (map[r][c] > 0) {
-				if (r > 0 && map[r - 1][c] > 0) continue;
-				if (r < height - 1 && map[r + 1][c] > 0) continue;
-				if (c > 0 && map[r][c - 1] > 0) continue;
-				if (c < width - 1 && map[r][c + 1] > 0) continue;
-				return false;
-			}
-		}
-	}
-	return true;
-}
-*/
-
-function extent(robots) {
-	let xMin = width;
-	let xMax = 0;
-	let yMin = height;
-	let yMax = 0;
-	for (let i = 0; i < robots.length; i++) {
-		// console.log("Robot", robots[i]);
-		if (robots[i][0] < xMin) { xMin = robots[i][0]; }
-		if (robots[i][0] > xMax) { xMax = robots[i][0]; }
-		if (robots[i][1] < yMin) { yMin = robots[i][1]; }
-		if (robots[i][1] > yMax) { yMax = robots[i][1]; }
-		// console.log("Extent", xMin, yMin, xMax, yMax);
-	}
-	// console.log("Extent", xMin, yMin, xMax, yMax);
-	return [xMin, yMin, xMax - xMin, yMax - yMin];
 }
 
 export class S14 extends Solver {
