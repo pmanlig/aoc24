@@ -62,8 +62,8 @@ export class S24 extends Solver {
 			let switched = [];
 
 			const findGate = (a, b, op) => gates.find(g => ((g[0] === a && g[2] === b) || (g[0] === b && g[2] === a)) && (g[1] === op));
-			const findInput = a => gates.filter(g => g[0] === a || g[2] === a);
-			const findInputAndOp = (a, op) => gates.find(g => (g[0] === a || g[2] === a) && g[1] === op);
+			// const findInput = a => gates.filter(g => g[0] === a || g[2] === a);
+			// const findInputAndOp = (a, op) => gates.find(g => (g[0] === a || g[2] === a) && g[1] === op);
 			const findOutput = o => gates.find(g => g[3] === o);
 			const switchOutput = (a, b) => {
 				let x = gates.find(g => g[3] === a);
